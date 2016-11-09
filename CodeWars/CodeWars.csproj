@@ -55,6 +55,7 @@
     <Compile Include="Old\PigLatin.cs" />
     <Compile Include="Old\PigLatin2.cs" />
     <Compile Include="Old\TheCouponCode.cs" />
+    <Compile Include="PlayingWithNumbers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
