@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 
 namespace TennisKata
 {
@@ -23,72 +17,120 @@ namespace TennisKata
 
         private bool MatchFinished { get; set; }
 
-        private void PlayerScored(Player scorer, Player opponent)
+        private bool PlayerScored(Player scorer, Player opponent)
         {
-            scorer.gameScore += 1;
-
-            if (ScorerWonAGame(scorer, opponent))
+            if (MatchFinished)
             {
-                scorer.setScore += 1;
-                StartNewGame(scorer, opponent);
+                return false;
+            }
 
-                if (scorer.setScore >= 6)
+            scorer.CurrentGameScore += 1;
+
+            if (IsInTieBreak(scorer, opponent))
+            {
+                if (WonATieBreak(scorer, opponent))
                 {
-                    scorer.matchScore += 1;
-
-                    if (scorer.matchScore == setsToWin)
-                    {
-                        MatchFinished = true;
-                    }
+                    scorer.CurrentSetScore += 1;
+                    StartNewGame(scorer, opponent);
                 }
             }
+            else
+            {
+                if (ScorerWonAGame(scorer, opponent))
+                {
+                    scorer.CurrentSetScore += 1;
+                    StartNewGame(scorer, opponent);
+                }
+            }
+
+            if (WonASet(scorer, opponent))
+            {
+                scorer.CurrentMatchScore += 1;
+                StartNewSet(scorer, opponent);
+
+                if (WonAMatch(scorer))
+                {
+                    MatchFinished = true;
+                    return false;
+                }
+            }
+
+            return true;
         }
 
-        private void StartNewGame(Player scorer, Player opponent)
+        public bool PlayerOneScored()
         {
-            scorer.gameScore = 0;
-            opponent.gameScore = 0;
+            return PlayerScored(playerOne, playerTwo);
         }
 
-        private bool ScorerWonAGame(Player scorer, Player opponent)
+        public bool PlayerTwoScored()
         {
-            return scorer.gameScore > 3 && scorer.gameScore > opponent.gameScore + 1;
-        }
-
-        public void PlayerOneScored()
-        {
-            PlayerScored(playerOne, playerTwo);
-        }
-
-        public void PlayerTwoScored()
-        {
-            PlayerScored(playerTwo, playerOne);
-
+            return PlayerScored(playerTwo, playerOne);
         }
 
         public int[] GetGameScore()
         {
-            int[] score = { playerOne.gameScore,  playerTwo.gameScore };
+            int[] score = { playerOne.CurrentGameScore, playerTwo.CurrentGameScore };
             return score;
         }
+
         public int[] GetSetScore()
         {
-            int[] score = { playerOne.setScore, playerTwo.setScore };
+            int[] score = { playerOne.CurrentSetScore, playerTwo.CurrentSetScore };
             return score;
         }
         public int[] GetMatchScore()
         {
-            int[] score = { playerOne.matchScore, playerTwo.matchScore };
+            int[] score = { playerOne.CurrentMatchScore, playerTwo.CurrentMatchScore };
             return score;
         }
+
+        private bool WonAMatch(Player scorer)
+        {
+            return scorer.CurrentMatchScore == setsToWin;
+        }
+
+        private static bool WonASet(Player scorer, Player opponent)
+        {
+            return (scorer.CurrentSetScore >= 6 && scorer.CurrentSetScore > opponent.CurrentSetScore + 1) || (scorer.CurrentSetScore == 7 && opponent.CurrentSetScore == 6);
+        }
+
+        private static bool WonATieBreak(Player scorer, Player opponent)
+        {
+            return scorer.CurrentGameScore > 6 && scorer.CurrentGameScore > opponent.CurrentGameScore + 1;
+        }
+
+        private bool IsInTieBreak(Player scorer, Player opponent)
+        {
+            return scorer.CurrentSetScore == 6 && opponent.CurrentSetScore == 6;
+        }
+
+        private void StartNewGame(Player scorer, Player opponent)
+        {
+            scorer.CurrentGameScore = 0;
+            opponent.CurrentGameScore = 0;
+        }
+
+        private void StartNewSet(Player scorer, Player opponent)
+        {
+            scorer.CurrentSetScore = 0;
+            opponent.CurrentSetScore = 0;
+        }
+
+        private bool ScorerWonAGame(Player scorer, Player opponent)
+        {
+            return scorer.CurrentGameScore > 3 && scorer.CurrentGameScore > opponent.CurrentGameScore + 1;
+        }
     }
+
+
     [TestFixture]
     public class TennisGameTests
     {
         [Test]
         public void TennisGame_WhenStartingAGame_MatchScoreIsZeroToZero()
         {
-            var tennisMatch = new TennisMatch("Paweł", "Tomek", 2);
+            var tennisMatch = CreateTennisMatch(0, 0, 0, 0, 0, 0);
             var expectedScore = new [] {0, 0};
             
             Assert.AreEqual(expectedScore, tennisMatch.GetMatchScore());
@@ -96,7 +138,7 @@ namespace TennisKata
         [Test]
         public void TennisGame_WhenStartingAGame_SetScoreIsZeroToZero()
         {
-            var tennisMatch = new TennisMatch("Paweł", "Tomek", 2);
+            var tennisMatch = CreateTennisMatch(0, 0, 0, 0, 0, 0);
             var expectedScore = new [] { 0, 0 };
 
             Assert.AreEqual(expectedScore, tennisMatch.GetSetScore());
@@ -104,23 +146,21 @@ namespace TennisKata
         [Test]
         public void TennisGame_WhenStartingAGame_GameScoreIsZeroToZero()
         {
-            var tennisMatch = new TennisMatch("Paweł", "Tomek", 2);
+            var tennisMatch = CreateTennisMatch(0, 0, 0, 0, 0, 0);
             var expectedScore = new [] { 0, 0 };
 
             Assert.AreEqual(expectedScore, tennisMatch.GetGameScore());
         }
-
         [Test]
         public void TennisGame_AfterPlayerOneScores_HisScoreIsIncreased()
         {
-            var tennisMatch = new TennisMatch("Paweł", "Tomek", 2);
+            var tennisMatch = CreateTennisMatch(0, 0, 0, 0, 0, 0);
             var expectedScore = new [] { 1, 0 };
 
             tennisMatch.PlayerOneScored();
 
             Assert.AreEqual(expectedScore,tennisMatch.GetGameScore());
         }
-
         [Test]
         public void TennisGame_WhenPlayerScoresFourPoints_HeWinsAGame()
         {
@@ -131,43 +171,68 @@ namespace TennisKata
 
             Assert.AreEqual(expectedScore, tennisMatch.GetSetScore());
         }
-
-
-
         [Test]
         public void TennisGame_WhenPlayersAreTiedWithThreePoints_ScoringTheFourthDoesntWinTheGame()
         {
-            var tennisMatch = new TennisMatch("Paweł", "Tomek", 2);
+            var tennisMatch = CreateTennisMatch(0, 0, 3, 0, 0, 3);
             var expectedScore = new [] { 0, 0 };
-
-            for (int i = 0; i < 3; i++)
-            {
-                tennisMatch.PlayerOneScored();
-                tennisMatch.PlayerTwoScored();
-            }
 
             tennisMatch.PlayerOneScored();
 
             Assert.AreEqual(expectedScore, tennisMatch.GetSetScore());
 
         }
-
-        [Test]
-        public void TennisGame_WhenPlayerWinsSixGames_HeWinsASet()
+        [TestCase(5, 4)]
+        [TestCase(6, 5)]
+        public void TennisGame_WhenPlayerWinsRequredGames_HeWinsASet(int playerOneGames, int playerTwoGames)
         {
-            var tennisMatch = new TennisMatch("Paweł", "Tomek", 2);
+            var tennisMatch = CreateTennisMatch(0, playerOneGames, 3, 0, playerTwoGames, 0);
             var expectedScore = new [] { 1, 0 };
-
-            for (int i = 0; i < 4 * 5+3; i++)
-            {
-                tennisMatch.PlayerOneScored();
-            }
 
             tennisMatch.PlayerOneScored();
 
             Assert.AreEqual(expectedScore, tennisMatch.GetMatchScore());
         }
+        [Test]
+        public void TennisGame_WhenTheSetIsTied_WinningAGameDoesntWinASet()
+        {
+            var tennisMatch = CreateTennisMatch(0, 5, 3, 0, 5, 0);
+            var expectedResult = new[] {0, 0};
 
+            tennisMatch.PlayerOneScored();
+            Assert.AreEqual(expectedResult, tennisMatch.GetMatchScore());
+        }
+        [Test]
+        public void TennisGame_WhenPlayingTieBreakAndWinningFourPoints_DoesntWinAGame()
+        {
+            var tennisMatch = CreateTennisMatch(0, 5, 3, 0, 6, 0);
+            var expectedResult = new[] { 6, 6 };
+            
+            tennisMatch.PlayerOneScored();
+
+            // Act
+            for (int i = 0; i < 4; i++)
+            {
+                tennisMatch.PlayerOneScored();
+            }
+            Assert.AreEqual(expectedResult, tennisMatch.GetSetScore());
+        }
+        [Test]
+        public void TennisGame_WhenPlayingTieBreakAndWinningSevenPoints_WinsAGame()
+        {
+            var tennisMatch = CreateTennisMatch(0, 5, 3, 0, 6, 0);
+            var expectedResult = new[] { 1, 0 };
+
+            tennisMatch.PlayerOneScored();
+
+            // Act
+            for (int i = 0; i < 7; i++)
+            {
+                tennisMatch.PlayerOneScored();
+            }
+
+            Assert.AreEqual(expectedResult, tennisMatch.GetMatchScore());
+        }
 
         private TennisMatch CreateTennisMatch(int playerOneSets, int playerOneGames, int playerOnePoints, int playerTwoSets, int playerTwoGames, int playerTwoPoints)
         {

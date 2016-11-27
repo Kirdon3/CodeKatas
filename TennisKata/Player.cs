@@ -8,19 +8,19 @@ namespace TennisKata
 {
     class Player
     {
-        public string playerName { get; set; }
+        public string PlayerName { get; set; }
 
-        public int gameScore { get; set; }
+        public int CurrentGameScore { get; set; }
 
-        public int setScore { get; set; }
+        public int CurrentSetScore { get; set; }
 
-        public int matchScore { get; set; }
+        public int CurrentMatchScore { get; set; }
 
 
 
         public Player(string playerName)
         {
-            this.playerName = playerName;
+            this.PlayerName = playerName;
         }
     }
 }
