@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Player.cs" />
+    <Compile Include="TennisGameTests.cs" />
     <Compile Include="TennisMatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
