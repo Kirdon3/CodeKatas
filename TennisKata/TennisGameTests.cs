@@ -119,7 +119,6 @@ namespace TennisKata
             var tennisMatch = CreateTennisMatch(0, 5, 3, 0, 6, 0);
             var expectedResult = new[] { 6, 6 };
 
-            // Act
             tennisMatch.PlayerOneScored();
 
             // Act

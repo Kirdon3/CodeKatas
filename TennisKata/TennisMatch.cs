@@ -24,36 +24,50 @@
 
             scorer.CurrentGameScore += 1;
 
+            HandleTieBreak(scorer, opponent);
+            HandleGame(scorer, opponent);
+            
+            if (WonASet(scorer, opponent))
+            {
+                HandleWonSet(scorer, opponent);
+            }
+
+            return true;
+        }
+
+        private bool HandleWonSet(Player scorer, Player opponent)
+        {
+            scorer.CurrentMatchScore += 1;
+            StartNewSet(scorer, opponent);
+
+            if (WonAMatch(scorer))
+            {
+                MatchFinished = true;
+                return false;
+            }
+            return true;
+        }
+
+        private void HandleTieBreak(Player scorer, Player opponent)
+        {
             if (IsInTieBreak(scorer, opponent))
             {
                 if (WonATieBreak(scorer, opponent))
                 {
-                    scorer.CurrentSetScore += 1;
                     StartNewGame(scorer, opponent);
-                }
+                } 
             }
-            else
+        }
+
+        private void HandleGame(Player scorer, Player opponent)
+        {
+            if (!IsInTieBreak(scorer, opponent))
             {
                 if (ScorerWonAGame(scorer, opponent))
                 {
-                    scorer.CurrentSetScore += 1;
                     StartNewGame(scorer, opponent);
-                }
+                } 
             }
-
-            if (WonASet(scorer, opponent))
-            {
-                scorer.CurrentMatchScore += 1;
-                StartNewSet(scorer, opponent);
-
-                if (WonAMatch(scorer))
-                {
-                    MatchFinished = true;
-                    return false;
-                }
-            }
-
-            return true;
         }
 
         public bool PlayerOneScored()
@@ -90,21 +104,26 @@
 
         private static bool WonASet(Player scorer, Player opponent)
         {
-            return (scorer.CurrentSetScore >= 6 && scorer.CurrentSetScore > opponent.CurrentSetScore + 1) || (scorer.CurrentSetScore == 7 && opponent.CurrentSetScore == 6);
+            return (scorer.CurrentSetScore >= 6 
+                && scorer.CurrentSetScore > opponent.CurrentSetScore + 1)
+                || (scorer.CurrentSetScore == 7 && opponent.CurrentSetScore == 6);
         }
 
         private static bool WonATieBreak(Player scorer, Player opponent)
         {
-            return scorer.CurrentGameScore > 6 && scorer.CurrentGameScore > opponent.CurrentGameScore + 1;
+            return scorer.CurrentGameScore > 6 
+                && scorer.CurrentGameScore > opponent.CurrentGameScore + 1;
         }
 
         private bool IsInTieBreak(Player scorer, Player opponent)
         {
-            return scorer.CurrentSetScore == 6 && opponent.CurrentSetScore == 6;
+            return scorer.CurrentSetScore == 6 
+                && opponent.CurrentSetScore == 6;
         }
 
         private void StartNewGame(Player scorer, Player opponent)
         {
+            scorer.CurrentSetScore += 1;
             scorer.CurrentGameScore = 0;
             opponent.CurrentGameScore = 0;
         }
@@ -117,7 +136,8 @@
 
         private bool ScorerWonAGame(Player scorer, Player opponent)
         {
-            return scorer.CurrentGameScore > 3 && scorer.CurrentGameScore > opponent.CurrentGameScore + 1;
+            return scorer.CurrentGameScore > 3 
+                && scorer.CurrentGameScore > opponent.CurrentGameScore + 1;
         }
     }
 }
