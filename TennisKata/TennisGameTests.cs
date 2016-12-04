@@ -5,11 +5,22 @@ namespace TennisKata
     [TestFixture]
     public class TennisGameTests
     {
+        private readonly string playerOneName = "John";
+        private readonly string playerTwoName = "Tonny";
+        private TennisGameTestFixture testFixture;
+
+        [SetUp]
+        public void SetUp()
+        {
+            this.testFixture = new TennisGameTestFixture();
+        }
+
         [Test]
         public void TennisGame_WhenStartingAGame_MatchScoreIsZeroToZero()
         {
             // Arrange
-            var tennisMatch = CreateTennisMatch(0, 0, 0, 0, 0, 0);
+            var tennisMatch = testFixture.WithPlayerOne(testFixture.BuildPlayer().WithName(playerOneName).Create())
+                .WithPlayerTwo(testFixture.BuildPlayer().WithName(playerTwoName).Create()).Create();
             var expectedScore = new [] {0, 0};
             
             // Act
@@ -21,7 +32,8 @@ namespace TennisKata
         public void TennisGame_WhenStartingAGame_SetScoreIsZeroToZero()
         {
             // Arrange
-            var tennisMatch = CreateTennisMatch(0, 0, 0, 0, 0, 0);
+            var tennisMatch = testFixture.WithPlayerOne(testFixture.BuildPlayer().WithName(playerOneName).Create())
+                .WithPlayerTwo(testFixture.BuildPlayer().WithName(playerTwoName).Create()).Create();
             var expectedScore = new [] { 0, 0 };
 
             // Act
@@ -33,7 +45,8 @@ namespace TennisKata
         public void TennisGame_WhenStartingAGame_GameScoreIsZeroToZero()
         {
             // Arrange
-            var tennisMatch = CreateTennisMatch(0, 0, 0, 0, 0, 0);
+            var tennisMatch = testFixture.WithPlayerOne(testFixture.BuildPlayer().WithName(playerOneName).Create())
+                .WithPlayerTwo(testFixture.BuildPlayer().WithName(playerTwoName).Create()).Create();
             var expectedScore = new [] { 0, 0 };
 
             // Act
@@ -45,7 +58,8 @@ namespace TennisKata
         public void TennisGame_AfterPlayerOneScores_HisScoreIsIncreased()
         {
             // Arrange
-            var tennisMatch = CreateTennisMatch(0, 0, 0, 0, 0, 0);
+            var tennisMatch = testFixture.WithPlayerOne(testFixture.BuildPlayer().WithName(playerOneName).Create())
+                .WithPlayerTwo(testFixture.BuildPlayer().WithName(playerTwoName).Create()).Create();
             var expectedScore = new [] { 1, 0 };
 
             // Act
@@ -60,8 +74,9 @@ namespace TennisKata
         {
             // Arrange
             var expectedScore = new [] { 1, 0 };
-            var tennisMatch = CreateTennisMatch(0, 0, 3, 0, 0, 0);
 
+            var tennisMatch = testFixture.WithPlayerOne(testFixture.BuildPlayer().WithName(playerOneName).WithPoints(3).Create())
+                .WithPlayerTwo(testFixture.BuildPlayer().WithName(playerTwoName).Create()).Create();
             // Act
             tennisMatch.PlayerOneScored();
 
@@ -73,7 +88,9 @@ namespace TennisKata
         public void TennisGame_WhenPlayersAreTiedWithThreePoints_ScoringTheFourthDoesntWinTheGame()
         {
             // Arrange
-            var tennisMatch = CreateTennisMatch(0, 0, 3, 0, 0, 3);
+            var tennisMatch = testFixture.WithPlayerOne(testFixture.BuildPlayer().WithName(playerOneName).WithPoints(3).Create())
+                .WithPlayerTwo(testFixture.BuildPlayer().WithName(playerTwoName).WithPoints(3).Create()).Create();
+
             var expectedScore = new [] { 0, 0 };
 
             // Act
@@ -89,7 +106,10 @@ namespace TennisKata
         public void TennisGame_WhenPlayerWinsRequredGames_HeWinsASet(int playerOneGames, int playerTwoGames)
         {
             // Arrange
-            var tennisMatch = CreateTennisMatch(0, playerOneGames, 3, 0, playerTwoGames, 0);
+            var tennisMatch = testFixture
+                .WithPlayerOne(testFixture.BuildPlayer().WithName(playerOneName).WithPoints(3).WithGames(playerOneGames).Create())
+                .WithPlayerTwo(testFixture.BuildPlayer().WithName(playerTwoName).WithGames(playerTwoGames).Create()).Create();
+            
             var expectedScore = new [] { 1, 0 };
 
             // Act
@@ -103,7 +123,9 @@ namespace TennisKata
         public void TennisGame_WhenTheSetIsTied_WinningAGameDoesntWinASet()
         {
             // Arrange
-            var tennisMatch = CreateTennisMatch(0, 5, 3, 0, 5, 0);
+            var tennisMatch = testFixture
+                .WithPlayerOne(testFixture.BuildPlayer().WithName(playerOneName).WithPoints(3).WithGames(5).Create())
+                .WithPlayerTwo(testFixture.BuildPlayer().WithName(playerTwoName).WithGames(5).Create()).Create();
             var expectedResult = new[] {0, 0};
 
             // Act
@@ -116,7 +138,10 @@ namespace TennisKata
         public void TennisGame_WhenPlayingTieBreakAndWinningFourPoints_DoesntWinAGame()
         {
             // Arrange
-            var tennisMatch = CreateTennisMatch(0, 5, 3, 0, 6, 0);
+            var tennisMatch = testFixture
+                .WithPlayerOne(testFixture.BuildPlayer().WithName(playerOneName).WithPoints(3).WithGames(5).Create())
+                .WithPlayerTwo(testFixture.BuildPlayer().WithName(playerTwoName).WithGames(6).Create()).Create();
+            
             var expectedResult = new[] { 6, 6 };
 
             tennisMatch.PlayerOneScored();
@@ -134,7 +159,9 @@ namespace TennisKata
         public void TennisGame_WhenPlayingTieBreakAndWinningSevenPoints_WinsAGame()
         {
             // Arrange
-            var tennisMatch = CreateTennisMatch(0, 5, 3, 0, 6, 0);
+            var tennisMatch = testFixture
+                .WithPlayerOne(testFixture.BuildPlayer().WithName(playerOneName).WithPoints(3).WithGames(5).Create())
+                .WithPlayerTwo(testFixture.BuildPlayer().WithName(playerTwoName).WithGames(6).Create()).Create();
             var expectedResult = new[] { 1, 0 };
 
             tennisMatch.PlayerOneScored();
@@ -147,44 +174,6 @@ namespace TennisKata
 
             // Assert
             Assert.AreEqual(expectedResult, tennisMatch.GetMatchScore());
-        }
-
-        private TennisMatch CreateTennisMatch(int playerOneSets, int playerOneGames, int playerOnePoints, int playerTwoSets, int playerTwoGames, int playerTwoPoints)
-        {
-            var tennisMatch = new TennisMatch("Pawe³", "Tomek", 2);
-
-
-            for (int i = 0; i < playerOneSets * 4 * 6; i++)
-            {
-                tennisMatch.PlayerOneScored();
-            }
-
-            for (int i = 0; i < playerTwoSets * 4 * 6; i++)
-            {
-                tennisMatch.PlayerTwoScored();
-            }
-
-            for (int i = 0; i < playerOneGames * 4 ; i++)
-            {
-                tennisMatch.PlayerOneScored();
-            }
-
-            for (int i = 0; i < playerTwoGames * 4; i++)
-            {
-                tennisMatch.PlayerTwoScored();
-            }
-
-            for (int i = 0; i < playerOnePoints; i++)
-            {
-                tennisMatch.PlayerOneScored();
-            }
-
-            for (int i = 0; i < playerTwoPoints; i++)
-            {
-                tennisMatch.PlayerTwoScored();
-            }
-
-            return tennisMatch;
         }
     }
 }

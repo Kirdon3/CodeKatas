@@ -30,9 +30,9 @@ namespace TennisKata
             return this;
         }
 
-        public TennisGameTestFixture WithSetsToWin(int setsToWin)
+        public TennisGameTestFixture WithSetsToWin(int numberOfSets)
         {
-            this.setsToWin = setsToWin;
+            this.setsToWin = numberOfSets;
             return this;
         }
 
@@ -47,12 +47,16 @@ namespace TennisKata
         {
             var tennisMatch = new TennisMatch(playerOne.PlayerName, playerTwo.PlayerName, setsToWin);
 
-            // plan:
-            // SetUpMatchScores(playerOne.CurrentMatchScore, playerTwo.CurrectMatchScore)
-            // SetUpSetScores(playerOne.CurrentSetScore, playerTwo.CurrectSetScore)
-            // SetUpGameScores(playerOne.CurrentGameScore, playerTwo.CurrectGameScore)
 
+            this.SetUpMatchScores(tennisMatch);
+            this.SetUpSetScores(tennisMatch);
+            this.SetUpGameScores(tennisMatch);
 
+            return tennisMatch;
+        }
+
+        private void SetUpMatchScores(TennisMatch tennisMatch)
+        {
             for (int i = 0; i < playerOne.CurrentMatchScore * 4 * 6; i++)
             {
                 tennisMatch.PlayerOneScored();
@@ -62,7 +66,10 @@ namespace TennisKata
             {
                 tennisMatch.PlayerTwoScored();
             }
+        }
 
+        private void SetUpSetScores(TennisMatch tennisMatch)
+        {
             for (int i = 0; i < playerOne.CurrentSetScore * 4; i++)
             {
                 tennisMatch.PlayerOneScored();
@@ -72,7 +79,10 @@ namespace TennisKata
             {
                 tennisMatch.PlayerTwoScored();
             }
+        }
 
+        private void SetUpGameScores(TennisMatch tennisMatch)
+        {
             for (int i = 0; i < playerOne.CurrentGameScore; i++)
             {
                 tennisMatch.PlayerOneScored();
@@ -82,8 +92,6 @@ namespace TennisKata
             {
                 tennisMatch.PlayerTwoScored();
             }
-
-            return tennisMatch;
         }
     }
 }
