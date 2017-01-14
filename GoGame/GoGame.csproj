@@ -45,7 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Rules.cs" />
-    <Compile Include="Strategies\LastCellWinnerStrategy.cs" />
+    <Compile Include="Strategies\WinnerByCountStrategy.cs" />
     <Compile Include="Strategies\KomiWinnerStrategy.cs" />
     <Compile Include="Strategies\WinnerFindingStrategy.cs" />
     <Compile Include="Board.cs" />

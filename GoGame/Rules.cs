@@ -19,11 +19,18 @@ namespace GoGame
 
         private void RemoveStoneIfSurrounded(int x, int y)
         {
-            var fullySurrounded = IsFullySurroundedBy(x, y, StoneColor.White);
+            var oppositeColor = GetOppositeColor(x, y);
+
+            var fullySurrounded = IsFullySurroundedBy(x, y, oppositeColor); 
             if (fullySurrounded)
             {
                 Board.MakePositionEmpty(x, y);
             }
+        }
+
+        private StoneColor GetOppositeColor(int x, int y)
+        {
+            return Board.GetStoneColor(x, y) == StoneColor.White ? StoneColor.Black : StoneColor.White;
         }
 
         public bool IsFullySurroundedBy(int x, int y, StoneColor surroundingStoneColor)
@@ -42,7 +49,7 @@ namespace GoGame
 
         public StoneColor GetWinner()
         {
-            var result = new LastCellWinnerStrategy(Board).GetWinner();
+            var result = new WinnerByCountStrategy(Board).GetWinner();
             if (result != StoneColor.None)
             {
                 return result;

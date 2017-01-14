@@ -1,8 +1,8 @@
 namespace GoGame
 {
-    public class LastCellWinnerStrategy : WinnerFindingStrategy
+    public class WinnerByCountStrategy : WinnerFindingStrategy
     {
-        public LastCellWinnerStrategy(Board board) : base(board)
+        public WinnerByCountStrategy(Board board) : base(board)
         {
         }
 

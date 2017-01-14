@@ -60,28 +60,34 @@ namespace GoGame
             Assert.AreEqual(PositionStatus.Empty, status);
         }
 
-        // What happens when you're ouyt of board position?
+        // What happens when you're out of board position?
 
-        [Test]
-        public void AddStone_SurroundOppositeColorStone_RemoveOppositeColorStone()
+        [TestCase(PositionStatus.Empty,    @"123456789
+                                        1 B 
+                                        2BWB
+                                        3 B
+                                        4
+                                        ")]
+        [TestCase(PositionStatus.Empty, @"123456789
+                                        1 W 
+                                        2WBW
+                                        3 W
+                                        4
+                                        ")]
+        [TestCase(PositionStatus.Filled, @"123456789
+                                        1 W 
+                                        2WWW
+                                        3 W
+                                        4
+                                        ")]
+        public void AddStone_SurroundOppositeColorStone_RemoveOppositeColorStone(PositionStatus expectedStatus, string boardMap)
         {
             var board = MakeBoard();
-            FillBoard(@"
- 123456789
-1 W 
-2WBW
-3 W
-4
-5
-6
-7
-8
-9
-", board);
+            FillBoard(boardMap, board);
 
             var result = board.GetPositionStatus(2, 2);
 
-            Assert.AreEqual(PositionStatus.Empty, result);
+            Assert.AreEqual(expectedStatus, result);
         }
 
         [Test]
@@ -158,11 +164,19 @@ namespace GoGame
         [Test]
         public void AddStone_RightSurroundOppositeColorStone_RemoveOppositeColorStone()
         {
-            var board = MakeBoard();
+            var board = MakeBoard(); FillBoard(@"
+ 123456789
+1
+2 W
+3WBW
+4 
+5
+6
+7
+8
+9
+", board);
 
-            board.AddStone(StoneColor.White, 2, 2);
-            board.AddStone(StoneColor.White, 1, 3); board.AddStone(StoneColor.Black, 2, 3);
-            board.AddStone(StoneColor.White, 2, 4);
 
             board.AddStone(StoneColor.White, 3, 3);
             var result = board.GetPositionStatus(2, 3);
@@ -334,6 +348,53 @@ namespace GoGame
             var result = board.GetWinner();
             Assert.AreEqual(StoneColor.White, result);
         }
+
+//        [Test]
+//        public void DetermineWinner_1BlackChainSorrounds2Cells_BlackWins()
+//        {
+//            var board = MakeBoard(); FillBoard(@"
+// 123456789
+//1  BB
+//2 B  B
+//3  BB
+//4  W
+//5
+//6
+//7
+//8
+//9
+//", board);
+
+
+//            StoneColor result = board.GetWinner();
+
+//            Assert.AreEqual(StoneColor.Black, result);
+//        }
+
+//        [Test]
+//        public void AddStone_Surround2OppositeColorStones_RemoveOppositeColorStone()
+//        {
+//            var board = MakeBoard();
+//            FillBoard(@"
+// 123456789
+//1 
+//2 WW
+//3WBBW 
+//4 WW
+//5
+//6
+//7
+//8
+//9
+//", board);
+
+
+//            var opositeStone1 = board.GetPositionStatus(2, 3);
+//            var opositeStone2 = board.GetPositionStatus(3, 3);
+
+//            Assert.AreEqual(PositionStatus.Empty, opositeStone2);
+//            Assert.AreEqual(PositionStatus.Empty, opositeStone1);
+//        }
 
         private void FillBoard(string stoneMap, Board board)
         {
