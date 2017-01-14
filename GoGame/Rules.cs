@@ -21,11 +21,36 @@ namespace GoGame
         {
             var oppositeColor = GetOppositeColor(x, y);
 
-            var fullySurrounded = IsFullySurroundedBy(x, y, oppositeColor); 
+            var almostSurrounded = IsAlmostFullySurrounded(x, y, oppositeColor);
+
+            var fullySurrounded = IsFullySurroundedBy(x, y, oppositeColor);
+            if (almostSurrounded)
+            {
+                Board.MakePositionEmpty(x, y);
+                Board.MakePositionEmpty(x+1, y);
+            }
             if (fullySurrounded)
             {
                 Board.MakePositionEmpty(x, y);
             }
+        }
+
+        private bool IsAlmostFullySurrounded(int x, int y, StoneColor oppositeColor)
+        {
+            if (Board.GetStoneColor(x,y) == StoneColor.None)
+            {
+                return false;
+            }
+            var EDGE = 2;
+            bool surroundedOnLeft = (x < EDGE || Board.GetStoneColor(x - 1, y) == oppositeColor);
+            bool surroundedOnRight = (x > Board.BoardSize - EDGE || Board.GetStoneColor(x + 1, y) == Board.GetStoneColor(x,y));
+            bool surroundedOnBottom = (y > Board.BoardSize - EDGE || Board.GetStoneColor(x, y + 1) == oppositeColor);
+            bool surroundedOnTop = (y < EDGE || Board.GetStoneColor(x, y - 1) == oppositeColor);
+
+
+            bool fullySurrounded = surroundedOnLeft && surroundedOnRight && surroundedOnBottom && surroundedOnTop;
+
+            return fullySurrounded;
         }
 
         private StoneColor GetOppositeColor(int x, int y)
