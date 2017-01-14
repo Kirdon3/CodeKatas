@@ -44,6 +44,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Rules.cs" />
+    <Compile Include="Strategies\LastCellWinnerStrategy.cs" />
+    <Compile Include="Strategies\KomiWinnerStrategy.cs" />
+    <Compile Include="Strategies\WinnerFindingStrategy.cs" />
     <Compile Include="Board.cs" />
     <Compile Include="FullGameTests.cs" />
     <Compile Include="PositionStatus.cs" />

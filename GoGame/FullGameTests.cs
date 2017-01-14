@@ -20,7 +20,19 @@ namespace GoGame
         public void AddStone_ToEmptyPosition_PositionIsFilled()
         {
             Board board = MakeBoard();
-            board.AddStone(StoneColor.Black, 1, 1);
+            FillBoard(@"
+ 123456789
+1B
+2
+3 
+4
+5
+6
+7
+8
+9
+", board);
+
             PositionStatus result = board.GetPositionStatus(1, 1);
             Assert.AreEqual(PositionStatus.Filled, result);
         }
@@ -29,6 +41,18 @@ namespace GoGame
         public void AddStore_ToEmptyPosition_OtherEmptyPositionIsUnaffected()
         {
             Board board = MakeBoard();
+            FillBoard(@"
+ 123456789
+1B
+2
+3
+4
+5
+6
+7
+8
+9
+", board);
 
             board.AddStone(StoneColor.Black, 1, 1);
             var status = board.GetPositionStatus(1, 2);
@@ -42,10 +66,18 @@ namespace GoGame
         public void AddStone_SurroundOppositeColorStone_RemoveOppositeColorStone()
         {
             var board = MakeBoard();
-
-            board.AddStone(StoneColor.White, 2, 1);
-            board.AddStone(StoneColor.White, 1, 2); board.AddStone(StoneColor.Black, 2, 2); board.AddStone(StoneColor.White, 3, 2);
-            board.AddStone(StoneColor.White, 2, 3);
+            FillBoard(@"
+ 123456789
+1 W 
+2WBW
+3 W
+4
+5
+6
+7
+8
+9
+", board);
 
             var result = board.GetPositionStatus(2, 2);
 
@@ -56,10 +88,19 @@ namespace GoGame
         public void AddStone_SurroundOppositeColorStone_RemoveOppositeColorStone2()
         {
             var board = MakeBoard();
-
-                                                            board.AddStone(StoneColor.White, 2, 2);
-            board.AddStone(StoneColor.White, 1, 3); board.AddStone(StoneColor.Black, 2, 3); board.AddStone(StoneColor.White, 3, 3);
-                                                            board.AddStone(StoneColor.White, 2, 4);
+            FillBoard(@"
+ 123456789
+1 
+2 W
+3WBW 
+4 W
+5
+6
+7
+8
+9
+", board);
+            
 
             var result = board.GetPositionStatus(2, 3);
 
@@ -70,12 +111,22 @@ namespace GoGame
         public void AddStone_AboveSurroundOppositeColorStone_RemoveOppositeColorStone()
         {
             var board = MakeBoard();
+            FillBoard(@"
+ 123456789
+1 
+2 
+3WBW
+4 W
+5
+6
+7
+8
+9
+", board);
 
-            board.AddStone(StoneColor.White, 1, 3); board.AddStone(StoneColor.Black, 2, 3); board.AddStone(StoneColor.White, 3, 3);
-                                                            board.AddStone(StoneColor.White, 2, 4);
 
             board.AddStone(StoneColor.White, 2, 2);
-            
+
             var result = board.GetPositionStatus(2, 3);
 
             Assert.AreEqual(PositionStatus.Empty, result);
@@ -85,10 +136,18 @@ namespace GoGame
         public void AddStone_LeftSurroundOppositeColorStone_RemoveOppositeColorStone()
         {
             var board = MakeBoard();
-
-                                                             board.AddStone(StoneColor.White, 2, 2);
-                                                             board.AddStone(StoneColor.Black, 2, 3); board.AddStone(StoneColor.White, 3, 3);
-                                                             board.AddStone(StoneColor.White, 2, 4);
+            FillBoard(@"
+ 123456789
+1
+2 W
+3 BW
+4 W
+5
+6
+7
+8
+9
+", board);
 
             board.AddStone(StoneColor.White, 1, 3);
             var result = board.GetPositionStatus(2, 3);
@@ -101,9 +160,9 @@ namespace GoGame
         {
             var board = MakeBoard();
 
-                                                                board.AddStone(StoneColor.White, 2, 2);
+            board.AddStone(StoneColor.White, 2, 2);
             board.AddStone(StoneColor.White, 1, 3); board.AddStone(StoneColor.Black, 2, 3);
-                                                                board.AddStone(StoneColor.White, 2, 4);
+            board.AddStone(StoneColor.White, 2, 4);
 
             board.AddStone(StoneColor.White, 3, 3);
             var result = board.GetPositionStatus(2, 3);
@@ -123,9 +182,19 @@ namespace GoGame
         public void DetermineWinner_AtLeast1CellWonForBlack_BlackWins()
         {
             var board = MakeBoard();
+            FillBoard(@"
+ 123456789
+1 B
+2B 
+3 
+4
+5
+6
+7
+8
+9
+", board);
 
-            /*Black Teritory here*/ board.AddStone(StoneColor.Black, 1,2);
-            board.AddStone(StoneColor.Black, 2, 1);
 
             StoneColor result = board.GetWinner();
 
@@ -134,11 +203,18 @@ namespace GoGame
         [Test]
         public void DetermineWinner_AtLeast1CellWonForBlackAndWhitePlayerLast_BlackWins()
         {
-            var board = MakeBoard();
-
-            /*Black Teritory here*/ board.AddStone(StoneColor.Black, 1,2);
-            board.AddStone(StoneColor.Black, 2, 1);
-            board.AddStone(StoneColor.White, 3, 1);
+            var board = MakeBoard(); FillBoard(@"
+ 123456789
+1 B
+2B 
+3W 
+4  
+5
+6
+7
+8
+9
+", board);
 
             StoneColor result = board.GetWinner();
 
@@ -148,11 +224,19 @@ namespace GoGame
         [Test]
         public void DetermineWinner_NotCornerCellForBlack_BlackWins()
         {
-            var board = MakeBoard();
-                                                    board.AddStone(StoneColor.Black, 3, 1);
-            board.AddStone(StoneColor.Black, 2, 2);/*Black Teritory here*/board.AddStone(StoneColor.Black, 4, 2);
-                                    board.AddStone(StoneColor.Black, 3, 3);
-            board.AddStone(StoneColor.White, 3, 4);
+            var board = MakeBoard(); FillBoard(@"
+ 123456789
+1  B
+2 B B
+3  B
+4  W
+5
+6
+7
+8
+9
+", board);
+
 
             StoneColor result = board.GetWinner();
 
@@ -163,8 +247,18 @@ namespace GoGame
         public void DetermineWinner_BlackDoesntOwnAnyCell_WhiteWins()
         {
             var board = MakeBoard();
-            board.AddStone(StoneColor.Black, 3, 1);
-            board.AddStone(StoneColor.White, 3, 4);
+            FillBoard(@"
+ 123456789
+1  
+2 
+3B  W
+4  
+5
+6
+7
+8
+9
+", board);
 
             StoneColor result = board.GetWinner();
 
@@ -175,16 +269,95 @@ namespace GoGame
         public void DetermineWinner_NotCornerCellForWhite_WhiteWins()
         {
             var board = MakeBoard();
-                                                board.AddStone(StoneColor.White, 3, 1);
-            board.AddStone(StoneColor.White, 2, 2);/*Black Teritory here*/board.AddStone(StoneColor.White, 4, 2);
-                                                board.AddStone(StoneColor.White, 3, 3);
-            board.AddStone(StoneColor.Black, 3, 4);
+
+            FillBoard(@"
+ 123456789
+1  W
+2 W W
+3  W
+4  B
+5
+6
+7
+8
+9
+", board);
+
 
             StoneColor result = board.GetWinner();
 
             Assert.AreEqual(StoneColor.White, result);
         }
 
+        [Test]
+        public void DetermineWinner_BlackOwns1CellsWhiteOwns2Cells_BlackWins()
+        {
+            var board = MakeBoard();
+
+            FillBoard(@"
+ 123456789
+1 B  W  W
+2B BW WW W
+3 B  W  W
+4
+5
+6
+7
+8
+9
+", board);
+
+
+            var result = board.GetWinner();
+            Assert.AreEqual(StoneColor.White, result);
+        }
+
+        [Test]
+        public void DetermineWinner_BlackOwns1CellWhiteOwns2CellsBlackGoesLast_BlackWins()
+        {
+            var board = MakeBoard();
+
+            FillBoard(@"
+ 123456789
+1 W  W  B
+2W WW WB B
+3 W  W  B
+4
+5
+6
+7
+8
+9
+", board);
+
+
+            var result = board.GetWinner();
+            Assert.AreEqual(StoneColor.White, result);
+        }
+
+        private void FillBoard(string stoneMap, Board board)
+        {
+            string[] lines = stoneMap.Trim().Split('\n');
+            for (int i = 1; i < lines.Length; i++)
+            {
+                string line = lines[i].Trim();
+
+                for (int j = 1; j < line.Length; j++)
+                {
+                    char cell = line[j];
+                    if (cell == 'W')
+                    {
+                        board.AddStone(StoneColor.White, i, j);
+                    }
+                    if (cell == 'B')
+                    {
+                        board.AddStone(StoneColor.Black, i, j);
+                    }
+                }
+
+            }
+
+        }
 
         private static Board MakeBoard()
         {
