@@ -47,6 +47,7 @@
     <Compile Include="ASum.cs" />
     <Compile Include="GetStringMiddle.cs" />
     <Compile Include="MaxDiffLength.cs" />
+    <Compile Include="Noobify.cs" />
     <Compile Include="Old\Accumul.cs" />
     <Compile Include="Old\Arge.cs" />
     <Compile Include="Old\FindNextSquare.cs" />
