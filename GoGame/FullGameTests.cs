@@ -372,7 +372,7 @@ namespace GoGame
         //        }
 
         [Test]
-        public void AddStone_Surround2OppositeColorStones_RemoveOppositeColorStone()
+        public void AddStone_Surround2OppositeColorStonesNotNearTopEdge_RemoveOppositeColorStone()
         {
             var board = MakeBoard();
             FillBoard(@"
@@ -395,6 +395,57 @@ namespace GoGame
             Assert.AreEqual(PositionStatus.Empty, opositeStone2);
             Assert.AreEqual(PositionStatus.Empty, opositeStone1);
         }
+
+        [Test]
+        public void AddStone_Surround2OppositeColorStones_RemoveOppositeColorStone()
+        {
+            var board = MakeBoard();
+            FillBoard(@"
+ 123456789
+1  WW
+2 WBBW
+3  WW 
+4 
+5
+6
+7
+8
+9
+", board);
+
+
+            var opositeStone1 = board.GetPositionStatus(3, 2);
+            var opositeStone2 = board.GetPositionStatus(4, 2);
+
+            Assert.AreEqual(PositionStatus.Empty, opositeStone2);
+            Assert.AreEqual(PositionStatus.Empty, opositeStone1);
+        }
+
+        [Test]
+        public void AddStone_2OppositeColorNotSorrounded_RemoveOppositeColorStone()
+        {
+            var board = MakeBoard();
+            FillBoard(@"
+ 123456789
+1  
+2 WW
+3WBBW   
+4 W
+5
+6
+7
+8
+9
+", board);
+
+
+            var opositeStone1 = board.GetPositionStatus(2, 3);
+            var opositeStone2 = board.GetPositionStatus(3, 3);
+
+            Assert.AreEqual(PositionStatus.Filled, opositeStone1);
+            Assert.AreEqual(PositionStatus.Filled, opositeStone2);
+        }
+
 
         private void FillBoard(string stoneMap, Board board)
         {
