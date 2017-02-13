@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{59FD75B4-02EC-42B2-B9EB-AE3DF02F23F4}</ProjectGuid>
+    <ProjectGuid>{C4177EC4-365D-4698-8BD6-861E1A586E68}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CodeWars</RootNamespace>
-    <AssemblyName>CodeWars</AssemblyName>
+    <RootNamespace>TennisKata</RootNamespace>
+    <AssemblyName>TennisKata</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -44,18 +44,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ASum.cs" />
-    <Compile Include="GetStringMiddle.cs" />
-    <Compile Include="MaxDiffLength.cs" />
-    <Compile Include="Old\Accumul.cs" />
-    <Compile Include="Old\Arge.cs" />
-    <Compile Include="Old\FindNextSquare.cs" />
-    <Compile Include="Old\GpsSpeed.cs" />
-    <Compile Include="Old\OpositeNumber.cs" />
-    <Compile Include="Old\PigLatin.cs" />
-    <Compile Include="Old\PigLatin2.cs" />
-    <Compile Include="Old\TheCouponCode.cs" />
-    <Compile Include="PlayingWithNumbers.cs" />
+    <Compile Include="Player.cs" />
+    <Compile Include="PlayerBuilder.cs" />
+    <Compile Include="TennisGameTestFixture.cs" />
+    <Compile Include="TennisGameTests.cs" />
+    <Compile Include="TennisMatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
